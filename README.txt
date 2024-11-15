@@ -9,25 +9,13 @@ python main.py -part1 -part2 -part3
 The flags -part1, -part2, -part3 are optional. You may only include those flags corresponding to the parts you wish to run.
 
 
-\section*{Part 1: Encoder Trained With Classifier}
-\subsection*{1.4}
+Part 1: Encoder Trained With Classifier
+
 To perform the sanity check on the Encoder that was trained, the following sentences were run through the trained Encoder model, and the attention matrices were evaluated. Sentence 1: "And it's not just my belief." The corresponding attention matrix for this sentence (Layer 3, Head 1) is shown in Figure 1. As we can see the weights of the matrix, are concentrated around the 2nd token in the sequence. This word refers to "it's" which is a possessive pronoun. This makes sense because all the words have to "contain information" about this word because this word encapsulates the context of the entire sentence. Similarly, the Sentence 2 that was considered for the sanity check: "Yet compassion is the work of a nation, not just a government." The corresponding attention matrix for this sentence (Layer 2, Head 2) is shown in Figure 2. The words which have the maximum attention are "not", which being a negation influences the semantics greatly of the rest of the sentence. "Yet" also has a reasonably high attention since it influences the semantics of the rest of the sentence greatly.
-\begin{figure}[h!]
-\centering
-\begin{minipage}{.5\textwidth}
-  \centering
-  \includegraphics[width=1.0\linewidth]{P1_1.png}
-  \caption{Figure 1}
-  \label{fig:test1}
-\end{minipage}%
-\begin{minipage}{.5\textwidth}
-  \centering
-  \includegraphics[width=1.0\linewidth]{p1_S2_4.png}
-  \caption{Figure 2}
-  \label{fig:test2}
-\end{minipage}
-\end{figure}
-\subsection*{1.5}
+
+![My Local Image](./P1_1.png "This is a local image")
+![My Local Image](./p1_S2_4.png "This is a local image")
+
 The table below showcases the Performance Evaluation of the Encoder+Classifier model:\\
 \begin{table}[h!]
 \centering
@@ -66,25 +54,14 @@ The table below showcases the Performance Evaluation of the Encoder+Classifier m
  \end{tabular}
 \end{table}
 \\
-\section*{Part 2: Pretraining Decoder Language Model}
-\subsection*{2.3}
+
+Part 2: Pretraining Decoder Language Model
+
 To perform the sanity check on the Decoder that was trained, the following sentences were run through the trained Decoder model, and the attention matrices were evaluated on the same sentences that were used in Part 1. In addition to the standard sanity check, using the same sentences allows us to see how the masked attention is different for the same sample sequences. Sentence 1: "And it's not just my belief." The  attention matrix for this sentence (Layer 2, Head 2) is shown in Figure 3. As we can see the weights of the matrix, are concentrated around the 4th token in the sequence: "just". It makes intuitive sense from a  semantic standpoint why this word might have more attention, when all future words are masked. Sentence 2: "Yet compassion is the work of a nation, not just a government." The corresponding attention matrix for this sentence (Layer 3, Head 2) is shown in Figure 4. The words which have the maximum attention are "not" again, which being a negation influences the semantics greatly of the rest of the sentence, same as in part 1. However, now we do notice that a lot of padding words which are not actually a part of the input sequence, are receiving a lot of attention. Hence, this might be representative of a deficit or unwanted quality of this particular attention head of this layer.
-\begin{figure}[h!]
-\centering
-\begin{minipage}{.5\textwidth}
-  \centering
-  \includegraphics[width=1.0\linewidth]{P2_4.png}
-  \caption{Figure 3}
-  \label{fig:test1}
-\end{minipage}%
-\begin{minipage}{.5\textwidth}
-  \centering
-  \includegraphics[width=1.0\linewidth]{p2_S2_6.png}
-  \caption{Figure 4}
-  \label{fig:test2}
-\end{minipage}
-\end{figure}
-\subsection*{2.4}
+
+![My Local Image](./P2_4.png "This is a local image")
+![My Local Image](./p2_S2_6.png "This is a local image")
+
 The perplexities vary because they are tested on different datasets and this is a reflection of the consistency of word choice and speech patterns of each of the presidents that make it predictable for our model:\\
 \\
 \begin{table}[h!]
@@ -113,12 +90,15 @@ The perplexities vary because they are tested on different datasets and this is 
  \hline
  \end{tabular}
 \end{table}
-\section*{Part 3: Exploration}
-\subsection*{Architectural Exploration}
+
+
+Part 3: Exploration
+
 The following architectural changes were explored:
-\subsubsection*{Trigonometric Positional Encoding}
+Trigonometric Positional Encoding
 A fixed sin wave and cos wave were considered (i.e. their shape was not trained through backpropagation). The sum of their values at different time positions (positions along the input sequence upto max of block\_size=32) was then considered to be the positional encoding instead of a standard positional encoding at different positions. The sin wave and cos wave were constructed such that each of the 32 positions would have a different positional encoding. Interestingly, this change made no difference to either the Encoder or the Decoders performance. Even though in both cases, the position of each token results in a unique number being added to the embedding, apparently the magnitude/order of these positional encodings do not matter so long as they are unique. Implementation can be found in the code.
-\subsubsection*{Dropout Layers}
+
+Dropout Layers
 Dropout layers were added to the feedforward neural net in each encoder layer, each decoder layer, as well as the classifier modules. However, after quick expetimentation, the dropout layers were removed from the encoder layers, and only retained in the classifier nn and decoder layers. The rates of dropout were varied and the following observations were made regarding the final test accuracy of the encoder (after 15 epochs), and the perplexities after 500 steps on the Train, Obama, H. Bush, W. Bush sets:\\
 \begin{table}[h!]
 \centering
